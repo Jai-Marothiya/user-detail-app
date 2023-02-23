@@ -62,7 +62,7 @@ user_name.addEventListener('keyup', (e) => {
 
 add_btn.addEventListener('click', () => {
     if (user_name.value === '' || user_email.value === '') {
-        showAlertMessage('Please enter a task', 'error');
+        showAlertMessage('Please enter details', 'error');
     } else {
         addToDo(user_name);
         saveToLocalStorage();
@@ -158,7 +158,7 @@ function showAlertMessage(message, type) {
 function deleteTodo(id) {
     todos = todos.filter(todo => todo.id !== id);
     saveToLocalStorage();
-    showAlertMessage('Todo deleted successfully', 'success');
+    showAlertMessage('User deleted successfully', 'success');
     showAllTodos();
 }
 
@@ -172,7 +172,7 @@ function editTodo(id) {
     saveToLocalStorage();
     add_btn.addEventListener('click', () => {
         add_btn.innerHTML = "<i class='bx bx-plus bx-sm'></i>"; 
-        showAlertMessage('Todo updated successfully', 'success');
+        showAlertMessage('User details updated successfully', 'success');
     });
 }
 
@@ -181,10 +181,10 @@ function clearAllTodos() {
     if(todos.length > 0) {
         todos = [];
         saveToLocalStorage();
-        showAlertMessage('All todos cleared successfully', 'success');
+        showAlertMessage('All User deleted successfully', 'success');
         showAllTodos();
     }else{
-        showAlertMessage('No todos to clear', 'error');
+        showAlertMessage('No User to delete', 'error');
     }
 }
 
