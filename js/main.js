@@ -14,10 +14,78 @@ const todos_list = document.querySelector('.todos-list');
 const table_body = document.querySelector('.table-body');
 const alert_message = document.querySelector('.alert-message');
 const delete_all_btn = document.querySelector('.delete-all-btn');
+let data1 ;
+let data2 ;
+let data3 ;
 
 let todos = JSON.parse(localStorage.getItem('todos')) || [];
 
 window.addEventListener('DOMContentLoaded', showAllTodos);
+
+/*************** API for country-state-city  **************/
+
+var headers = new Headers();
+headers.append("X-CSCAPI-KEY", "SEpnTXhhbXpFS1NnWXNqMmtBTTRnMXppWlFlZGYwdUtBZ2xSODFIMQ==");
+
+var requestOptions = {
+   method: 'GET',
+   headers: headers,
+   redirect: 'follow'
+};
+
+window.addEventListener('load',()=>{
+    fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
+    .then(response => response.json())
+    .then(countries => {
+        data1 = countries;
+        // console.log(countries)
+        countries.forEach(country=>{
+            user_country.innerHTML+=`
+            <option value=${country.iso2} >${country.name}</option>
+            `;
+        })
+    })
+    .catch(error => console.log('error', error));
+})
+
+// state
+user_country.addEventListener('change',(e)=>{
+    fetch(`https://api.countrystatecity.in/v1/countries/${e.target.value}/states`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+        data2 = result;
+        result.sort((a, b) => (a.name > b.name) ? 1 : -1)
+        user_state.innerHTML='';
+        // console.log(typeof(countries))
+        result.forEach(state=>{
+            user_state.innerHTML+=`
+            <option value=${state.iso2}>${state.name}</option>
+            `;
+        })
+    })
+    .catch(error => console.log('error', error));
+})
+
+//city
+user_state.addEventListener('change',(e)=>{
+    fetch(`https://api.countrystatecity.in/v1/countries/${user_country.value}/states/${e.target.value}/cities`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+        data3 = result;
+        console.log(result);
+        result.sort((a, b) => (a.name > b.name) ? 1 : -1)
+        user_city.innerHTML='';
+        // console.log(typeof(countries))
+        result.forEach(city=>{
+            user_city.innerHTML+=`
+            <option value=${city.id}>${city.name}</option>
+            `;
+        })
+    })
+    .catch(error => console.log('error', error));
+})
+
+/******************* API END ******************/
 
 //get random unique id
 function getRandomId() {
@@ -25,6 +93,9 @@ function getRandomId() {
 }
 
 function addToDo(task_input) {
+    let country = data1.find(country => country.iso2 == user_country.value);
+    let state = data2.find(state => state.iso2 == user_state.value);
+    let city = data3.find(city => city.id == user_city.value);
     let task = {
         id: getRandomId(),
         // task: task_input.value,
@@ -34,9 +105,9 @@ function addToDo(task_input) {
             dob: user_dob.value,
             gender: user_gender.value,
             hobby : user_hobby.value,
-            country: user_country.value,
-            state: user_state.value,
-            city: user_city.value
+            country: country.name,
+            state: state.name,
+            city: city.name
         },
         completed: false
     }
